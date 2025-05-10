@@ -1,5 +1,4 @@
-import { DataTypes, Sequelize, Model, Optional } from 'sequelize';
-import sequelize from '../config/connection';
+import { DataTypes, Model, Optional, Sequelize } from 'sequelize';
 
 interface UserAttributes {
     id: number;
@@ -39,71 +38,98 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 }
-export function UserFactory(sequelize: Sequelize): typeof User {
+
+export function initUser(sequelize: Sequelize): typeof User {
     User.init(
         {
-        id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true,
+            id: {
+                type: DataTypes.INTEGER,
+                autoIncrement: true,
+                primaryKey: true,
+            },
+            username: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            email: {
+                type: DataTypes.STRING,
+                allowNull: false,
+                unique: true,
+                validate: {
+                    isEmail: true,
+                },
+            },
+            password: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            skills: {
+                type: DataTypes.JSONB,
+                allowNull: true,
+                defaultValue: [],
+                get() {
+                    const value = this.getDataValue('skills');
+                    return value || [];
+                },
+                set(value: string[]) {
+                    this.setDataValue('skills', value || []);
+                }
+            },
+            role: {
+                type: DataTypes.ENUM('mentor', 'mentee'),
+                allowNull: false,
+            },
+            rating: {
+                type: DataTypes.FLOAT,
+                defaultValue: 0,
+                validate: {
+                    min: 0,
+                    max: 5,
+                },
+            },
+            profilePicture: {
+                type: DataTypes.STRING,
+                allowNull: true,
+                field: 'profilePicture'
+            },
+            bio: {
+                type: DataTypes.TEXT,
+                allowNull: true,
+            },
+            availability: {
+                type: DataTypes.JSONB,
+                allowNull: true,
+                defaultValue: [],
+                get() {
+                    const value = this.getDataValue('availability');
+                    return value || [];
+                },
+                set(value: string[]) {
+                    this.setDataValue('availability', value || []);
+                }
+            },
+            location: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            linkedin: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            github: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            twitter: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            }
         },
-        username: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        email: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        password: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        skills:{
-            type: DataTypes.ARRAY(DataTypes.STRING),
-            allowNull: true,
-        },
-        role: {
-            type: DataTypes.ENUM('mentor', 'mentee'),
-            allowNull: false,
-        },
-        rating: {
-            type: DataTypes.FLOAT,
-            defaultValue: 0,
-        },
-
-        profilePicture: {
-            type: DataTypes.STRING,
-        },
-
-        bio: {
-            type: DataTypes.TEXT,
-        },
-
-        availability: {
-            type: DataTypes.ARRAY(DataTypes.STRING),
-        },
-        location: {
-            type: DataTypes.STRING,
-        },
-
-        linkedin: {
-            type: DataTypes.STRING,
-        },
-
-        github: {
-            type: DataTypes.STRING,
-        },
-
-        twitter: {
-            type: DataTypes.STRING,
-        }
-    },
-        {   
-
-        timestamps: true,
-        tableName: 'users',
-        sequelize,
+        {
+            sequelize,
+            modelName: 'User',
+            tableName: 'users',
+            timestamps: true,
         }
     );
 

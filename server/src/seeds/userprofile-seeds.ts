@@ -1,12 +1,16 @@
 import { User } from "../models";
+import bcrypt from 'bcryptjs';
 
 export const seedUserProfiles = async () => {
     try {
+        // Hash passwords
+        const hashedPassword = await bcrypt.hash('password123', 10);
+
         await User.bulkCreate([
             {
                 username: 'JohnDoe',
                 email: 'john@example.com',
-                password: 'password123',
+                password: hashedPassword,
                 role: 'mentor',
                 skills: ['JavaScript', 'React', 'Node.js'],
                 rating: 4.5,
@@ -21,7 +25,7 @@ export const seedUserProfiles = async () => {
             {
                 username: 'JaneSmith',
                 email: 'jane@example.com',
-                password: 'password123',
+                password: hashedPassword,
                 role: 'mentee',
                 skills: ['HTML', 'CSS'],
                 rating: 0,
@@ -36,19 +40,21 @@ export const seedUserProfiles = async () => {
             {
                 username: 'BobJohnson',
                 email: 'bob@example.com',
-                password: 'password123',
+                password: hashedPassword,
                 role: 'mentor',
-                skills: ['Python', 'Django', 'PostgreSQL'],
+                skills: ['Python', 'Data Science', 'Machine Learning'],
                 rating: 4.8,
                 profilePicture: 'https://api.dicebear.com/7.x/avataaars/svg?seed=bob',
-                bio: 'Backend developer specializing in Python and databases',
-                availability: ['Monday', 'Tuesday', 'Wednesday'],
-                location: 'Chicago, IL',
+                bio: 'Data scientist with expertise in machine learning and AI',
+                availability: ['Monday', 'Wednesday', 'Friday'],
+                location: 'Boston, MA',
                 linkedin: 'https://linkedin.com/in/bobjohnson',
                 github: 'https://github.com/bobjohnson',
                 twitter: 'https://twitter.com/bobjohnson'
             }
-        ], { individualHooks: true });
+        ]);
+
+        console.log('----- USERS SEEDED -----');
     } catch (error) {
         console.error('Error seeding users:', error);
         throw error;

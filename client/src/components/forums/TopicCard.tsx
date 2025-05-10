@@ -4,7 +4,7 @@ import { ForumTopic } from '../../types/forum.types';
 
 const TopicCard: React.FC<{ topic: ForumTopic }> = ({ topic }) => {
   return (
-    <div className="border p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+    <div className="border p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow bg-white">
       <div className="flex justify-between items-start">
         <div>
           <Link
@@ -20,7 +20,7 @@ const TopicCard: React.FC<{ topic: ForumTopic }> = ({ topic }) => {
         </span>
       </div>
       <div className="mt-4 flex items-center text-sm text-gray-500">
-        <span>Posted by {topic.User?.username || 'Anonymous'}</span>
+        <span>Posted by {topic.Author?.username || 'Anonymous'}</span>
         <span className="mx-2">•</span>
         <span>{new Date(topic.createdAt).toLocaleDateString()}</span>
         <span className="mx-2">•</span>

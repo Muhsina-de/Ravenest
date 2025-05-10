@@ -1,84 +1,94 @@
 import { Sequelize } from 'sequelize';
 import { config } from 'dotenv';
-import { UserFactory } from './userprofile';
-import { SessionFactory } from './session';
-import { ReviewFactory } from './review';
+import { initUser } from './userprofile';
+import { initSession } from './session';
+import { initializeReview } from './review';
 import ForumTopic from './ForumTopics';
 import ForumComment from './ForumComments';
-// Load environment variablesconfig();
+import appConfig from '../config';
 
-/**
- * Database configuration options
- */
-const dbConfig = {
-  name: process.env.DB_NAME || 'skillbridge_db',
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'SNH123!@im',
-  host: process.env.DB_HOST || 'localhost',
-  dialect: 'postgres' as const,
-  logging: process.env.NODE_ENV === 'production' ? false : console.log,
-};
+// Load environment variables
+config();
 
 /**
  * Initialize Sequelize instance with database configuration
  */
-const sequelize = new Sequelize(
-  dbConfig.name,
-  dbConfig.user,
-  dbConfig.password,
-  {
-    host: dbConfig.host,
-    dialect: dbConfig.dialect,
-    logging: dbConfig.logging,
-  }
-);
+const sequelize = new Sequelize({
+  database: appConfig.DB_NAME,
+  username: appConfig.DB_USER,
+  password: appConfig.DB_PASSWORD,
+  host: appConfig.DB_HOST,
+  port: appConfig.DB_PORT,
+  dialect: 'postgres',
+  dialectOptions: {
+    decimalNumbers: true,
+    ssl: appConfig.NODE_ENV === 'production' ? {
+      require: true,
+      rejectUnauthorized: false
+    } : false
+  },
+  logging: appConfig.NODE_ENV === 'production' ? false : console.log,
+});
 
-/**
- * Initialize models using their respective factories
- */
-const User = UserFactory(sequelize);
-const Session = SessionFactory(sequelize);
-const Review = ReviewFactory(sequelize);
+// Initialize models
+const User = initUser(sequelize);
+const Session = initSession(sequelize);
+const Review = initializeReview(sequelize);
 
-/**
- * Define User-Session associations
- * - A user can have many sessions as mentee
- * - A user can have many sessions as mentor
- * - A session belongs to a user as mentee
- * - A session belongs to a user as mentor
- */
-User.hasMany(Session, { foreignKey: 'menteeId', as: 'menteeSessions' });
-User.hasMany(Session, { foreignKey: 'mentorId', as: 'mentorSessions' });
-Session.belongsTo(User, { foreignKey: 'menteeId', as: 'mentee' });
-Session.belongsTo(User, { foreignKey: 'mentorId', as: 'mentor' });
+// Initialize forum models
+ForumTopic.initialize(sequelize);
+ForumComment.initialize(sequelize);
 
-/**
- * Define User-Review and Session-Review associations
- * - A user can have many reviews as mentee
- * - A user can have many reviews as mentor
- * - A review belongs to a user as mentee
- * - A review belongs to a user as mentor
- * - A review belongs to a session
- * - A session can have one review
- */
-User.hasMany(Review, { foreignKey: 'menteeId', as: 'menteeReviews' });
-User.hasMany(Review, { foreignKey: 'mentorId', as: 'mentorReviews' });
-Review.belongsTo(User, { foreignKey: 'menteeId', as: 'mentee' });
-Review.belongsTo(User, { foreignKey: 'mentorId', as: 'mentor' });
-Review.belongsTo(Session, { foreignKey: 'sessionId' });
-Session.hasOne(Review, { foreignKey: 'sessionId' });
+// Define associations
+User.hasMany(Session, {
+  foreignKey: 'menteeId',
+  as: 'menteeSessions',
+  onDelete: 'CASCADE'
+});
 
+User.hasMany(Session, {
+  foreignKey: 'mentorId',
+  as: 'mentorSessions',
+  onDelete: 'CASCADE'
+});
 
+Session.belongsTo(User, {
+  foreignKey: 'menteeId',
+  as: 'mentee'
+});
 
-User.hasMany(ForumTopic, { foreignKey: 'userId' });
-ForumTopic.belongsTo(User, { foreignKey: 'userId' });
+Session.belongsTo(User, {
+  foreignKey: 'mentorId',
+  as: 'mentor'
+});
 
-User.hasMany(ForumComment, { foreignKey: 'userId' });
-ForumComment.belongsTo(User, { foreignKey: 'userId' });
+User.hasMany(Review, {
+  foreignKey: 'mentee_id',
+  as: 'givenReviews',
+  onDelete: 'CASCADE'
+});
 
-ForumTopic.hasMany(ForumComment, { foreignKey: 'Id' });
-ForumComment.belongsTo(ForumTopic, { foreignKey: 'Id' });
+User.hasMany(Review, {
+  foreignKey: 'mentor_id',
+  as: 'receivedReviews',
+  onDelete: 'CASCADE'
+});
 
+Review.belongsTo(User, {
+  foreignKey: 'mentee_id', 
+  as: 'mentee'
+});
+
+Review.belongsTo(User, {
+  foreignKey: 'mentor_id',
+  as: 'mentor'
+});
+
+// Forum associations
+ForumTopic.associate({ User, ForumComment });
+ForumComment.associate({ User, ForumTopic });
+User.hasMany(ForumTopic, { foreignKey: 'authorId' });
+User.hasMany(ForumComment, { foreignKey: 'authorId' });
 
 // Test database connection
 sequelize
@@ -87,8 +97,8 @@ sequelize
     console.log('Database connection has been established successfully.');
   })
   .catch((error) => {
-    console.error('Unable to connect to the database:', error);
-    process.exit(1); // Exit if we can't connect to the database
+    console.error('Unable to connect to the database:', error);       
+    process.exit(1); // Exit if we can't connect to the database      
   });
 
 export { sequelize, User, Session, Review, ForumTopic, ForumComment };

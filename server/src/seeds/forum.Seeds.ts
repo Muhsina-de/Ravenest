@@ -3,7 +3,7 @@ export const forumSeeds = {
       {
         title: "Getting Started with React",
         content: "What resources would you recommend for learning React?",
-        userId: 1,
+        authorId: 4,
         category: "Frontend Development",
         createdAt: new Date(),
         updatedAt: new Date()
@@ -11,7 +11,7 @@ export const forumSeeds = {
       {
         title: "Career Transition Tips",
         content: "Looking for advice on switching to tech from another field",
-        userId: 2,
+        authorId: 6,
         category: "Career Advice",
         createdAt: new Date(),
         updatedAt: new Date()
@@ -20,14 +20,14 @@ export const forumSeeds = {
     comments: [
       {
         content: "The official React docs are a great starting point!",
-        userId: 2,
+        authorId: 5,
         topicId: 1,
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
         content: "I recommend starting with small projects to build confidence",
-        userId: 1,
+        authorId: 4,
         topicId: 2,
         createdAt: new Date(),
         updatedAt: new Date()

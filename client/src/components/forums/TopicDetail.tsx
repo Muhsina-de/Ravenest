@@ -34,7 +34,7 @@ const TopicDetail: React.FC = () => {
       <div className="bg-white shadow rounded-lg p-6">
         <h1 className="text-2xl font-bold text-gray-900">{topic.title}</h1>
         <div className="mt-2 flex items-center text-sm text-gray-500">
-          <span>Posted by {topic.User?.username || 'Anonymous'}</span>
+          <span>Posted by {topic.Author?.username || 'Anonymous'}</span>
           <span className="mx-2">•</span>
           <span>{new Date(topic.createdAt).toLocaleDateString()}</span>
         </div>

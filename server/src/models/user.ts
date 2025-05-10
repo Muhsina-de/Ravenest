@@ -8,7 +8,15 @@ interface UserAttributes {
   email: string;
   password: string;
   role: string;
-  profilePicture?: string;  // Added optional profilePicture field
+  profilePicture?: string;
+  bio?: string;
+  skills?: string[];
+  rating?: number;
+  availability?: string[];
+  location?: string;
+  linkedin?: string;
+  github?: string;
+  twitter?: string;
 }
 
 interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {}
@@ -19,7 +27,15 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
   public email!: string;
   public password!: string;
   public role!: string;
-  public profilePicture?: string;  // Optional property
+  public profilePicture?: string;
+  public bio?: string;
+  public skills?: string[];
+  public rating?: number;
+  public availability?: string[];
+  public location?: string;
+  public linkedin?: string;
+  public github?: string;
+  public twitter?: string;
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -54,7 +70,40 @@ export function UserFactory(sequelize: Sequelize): typeof User {
         type: DataTypes.ENUM('mentor', 'mentee'),
         allowNull: false,
       },
-      profilePicture: {  // New attribute definition
+      profilePicture: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      bio: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      skills: {
+        type: DataTypes.ARRAY(DataTypes.STRING),
+        allowNull: true,
+      },
+      rating: {
+        type: DataTypes.FLOAT,
+        allowNull: true,
+        defaultValue: 0,
+      },
+      availability: {
+        type: DataTypes.ARRAY(DataTypes.STRING),
+        allowNull: true,
+      },
+      location: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      linkedin: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      github: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      twitter: {
         type: DataTypes.STRING,
         allowNull: true,
       },

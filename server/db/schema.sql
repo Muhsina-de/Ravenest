@@ -1,5 +1,6 @@
 -- DROP DATABASE
-DROP DATABASE IF EXISTS skillbridge_db;
+DROP DATABASE IF EXISTS ravenest_db;
+USE postgres;
 
 -- CREATE DATABASE
-CREATE DATABASE skillbridge_db;
+CREATE DATABASE ravenest_db;

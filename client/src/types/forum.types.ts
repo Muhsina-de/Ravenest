@@ -3,10 +3,10 @@ export interface ForumTopic {
     title: string;
     content: string;
     category: string;
-    userId: number;
+    authorId: number;
     createdAt: string;
     updatedAt: string;
-    User?: {
+    Author?: {
       username: string;
       profilePicture?: string;
     };
@@ -16,11 +16,11 @@ export interface ForumTopic {
   export interface ForumComment {
     id: number;
     content: string;
-    userId: number;
+    authorId: number;
     topicId: number;
     createdAt: string;
     updatedAt: string;
-    User?: {
+    Author?: {
       username: string;
       profilePicture?: string;
     };

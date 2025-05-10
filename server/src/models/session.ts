@@ -1,6 +1,5 @@
-import {DataTypes, Sequelize, Model, Optional} from 'sequelize';    
-import { User } from './userprofile.js';
-import sequelize from '../config/connection'
+import { DataTypes, Model, Optional, Sequelize } from 'sequelize';
+
 interface SessionAttributes {
     id: number;
     menteeId: number;
@@ -14,7 +13,9 @@ interface SessionAttributes {
     duration: number;
     message: string;
 }
+
 interface SessionCreationAttributes extends Optional<SessionAttributes, 'id'> {}
+
 export class Session extends Model<SessionAttributes, SessionCreationAttributes> implements SessionAttributes {
     public id!: number;
     public menteeId!: number;
@@ -30,58 +31,61 @@ export class Session extends Model<SessionAttributes, SessionCreationAttributes>
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 }
-export function SessionFactory(sequelize: Sequelize): typeof Session {
-Session.init(
-    {
-        id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true,
+
+export function initSession(sequelize: Sequelize): typeof Session {
+    Session.init(
+        {
+            id: {
+                type: DataTypes.INTEGER,
+                autoIncrement: true,
+                primaryKey: true,
+            },
+            menteeId: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
+            mentorId: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
+            status: {
+                type: DataTypes.ENUM('pending', 'accepted', 'rejected', 'cancelled'),
+                defaultValue: 'pending',
+            },
+            date: {
+                type: DataTypes.DATE,
+                allowNull: false,
+            },
+            time: {
+                type: DataTypes.TIME,
+                allowNull: false,
+            },
+            skill: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            price: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
+            sessionNotes: {
+                type: DataTypes.TEXT,
+            },
+            duration: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
+            message: {
+                type: DataTypes.TEXT,
+            },
         },
-        menteeId: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        mentorId: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        status: {
-            type: DataTypes.ENUM('pending', 'accepted', 'rejected', 'cancelled'),
-            defaultValue: 'pending',
-        },
-        date: {
-            type: DataTypes.DATE,
-            allowNull: false,
-        },
-        time: {
-            type: DataTypes.TIME,
-            allowNull: false,
-        },
-        skill: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        price: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        sessionNotes: {
-            type: DataTypes.TEXT,
-        },
-        duration: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        message: {
-            type: DataTypes.TEXT,
-        },
-    },
-    {
-        timestamps: false,
-        tableName: 'sessions',
-        sequelize
-    });
+        {
+            sequelize,
+            modelName: 'Session',
+            tableName: 'sessions',
+            timestamps: true,
+        }
+    );
 
     return Session;
 }

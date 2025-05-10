@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { API_BASE_URL } from '../../constants/api';
 import { useAuth } from '../../context/AuthContext';
 import { ForumComment } from '../../types/forum.types';
+import { createComment } from '../../services/forum.service';
 
 interface CommentFormProps {
   topicId: number;
@@ -28,16 +27,22 @@ const CommentForm: React.FC<CommentFormProps> = ({ topicId, onCommentAdded }) =>
     setIsSubmitting(true);
     
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/forum/comments`, {
-        topicId,
-        content,
-        userId: user.id
-      });
+      console.log('User:', user);
+      console.log('TopicId:', topicId);
+      console.log('Content:', content);
+
+      const response = await createComment(topicId, content);
       
-      onCommentAdded(response.data as ForumComment);
-      setContent('');
-      setError('');
+      if (response.status === 201 && response.data) {
+        console.log('Response:', response.data);
+        onCommentAdded(response.data as ForumComment);
+        setContent('');
+        setError('');
+      } else {
+        throw new Error('Failed to post comment');
+      }
     } catch (err) {
+      console.error('Error:', err);
       setError('Failed to post comment');
     } finally {
       setIsSubmitting(false);
@@ -68,7 +73,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ topicId, onCommentAdded }) =>
       <button
         type="submit"
         disabled={isSubmitting || !content.trim()}
-        className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+        className="mt-2 px-4 py-2 bg-gradient-primary text-white rounded hover:bg-gradient-light disabled:opacity-50"
       >
         {isSubmitting ? 'Posting...' : 'Post Comment'}
       </button>

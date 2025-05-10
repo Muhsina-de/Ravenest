@@ -3,6 +3,7 @@ import SessionBookingForm from '../components/sessions/SessionBookingForm';
 
 // Test data - will be replaced with real data later
 const testMentor = {
+  id: 1,
   username: "Jane Smith",
   email: "jane.smith@example.com",
   skills: ["JavaScript", "React", "Node.js", "TypeScript"],

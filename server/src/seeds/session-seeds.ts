@@ -3,7 +3,7 @@ import { Session } from "../models/session";
 export const seedSessions = async () => {
     await Session.bulkCreate([
         {
-            menteeId: 2, // JaneSmith
+            menteeId: 4, // Alex Rivera
             mentorId: 1, // JohnDoe
             status: 'accepted',
             date: new Date('2024-03-20'),
@@ -15,7 +15,7 @@ export const seedSessions = async () => {
             message: 'Looking forward to learning React!'
         },
         {
-            menteeId: 2, // JaneSmith
+            menteeId: 5, // Sophie Chen
             mentorId: 3, // BobJohnson
             status: 'accepted',
             date: new Date('2024-03-21'),
@@ -27,7 +27,7 @@ export const seedSessions = async () => {
             message: 'Need help with database concepts'
         },
         {
-            menteeId: 2, // JaneSmith
+            menteeId: 6, // Marcus Johnson
             mentorId: 1, // JohnDoe
             status: 'pending',
             date: new Date('2024-03-25'),

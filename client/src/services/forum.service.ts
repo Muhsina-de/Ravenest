@@ -1,19 +1,20 @@
-import axios from 'axios';
-import { API_BASE_URL } from '../constants/api';
+import axiosInstance from '../utils/axios';
+import { FORUM_ENDPOINTS } from '../constants/api';
 
 export const getTopics = () =>
-  axios.get(`${API_BASE_URL}/api/forum/topics`);
+  axiosInstance.get(FORUM_ENDPOINTS.TOPICS.GET_ALL);
 
 export const getTopic = (id: number) =>
-  axios.get(`${API_BASE_URL}/api/forum/topics/${id}`);
+  axiosInstance.get(FORUM_ENDPOINTS.TOPICS.GET_BY_ID(id));
 
 export const createTopic = (data: { title: string; content: string; category: string }) =>
-  axios.post(`${API_BASE_URL}/api/forum/topics`, data);
+  axiosInstance.post(FORUM_ENDPOINTS.TOPICS.CREATE, data);
 
 export const updateTopic = (id: number, data: { title: string; content: string; category: string }) =>
-  axios.put(`${API_BASE_URL}/api/forum/topics/${id}`, data);
+  axiosInstance.put(FORUM_ENDPOINTS.TOPICS.UPDATE(id), data);
 
 export const deleteTopic = (id: number) =>
-  axios.delete(`${API_BASE_URL}/api/forum/topics/${id}`);
+  axiosInstance.delete(FORUM_ENDPOINTS.TOPICS.DELETE(id));
+
 export const createComment = (topicId: number, content: string) =>
-  axios.post(`${API_BASE_URL}/api/forum/topics/${topicId}/comments`, { content });
+  axiosInstance.post(FORUM_ENDPOINTS.COMMENTS.CREATE(topicId), { content });

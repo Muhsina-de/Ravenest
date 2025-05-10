@@ -1,113 +1,66 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-
-interface UserProfile {
-  username: string;
-  email: string;
-  skills: string[];
-  role: string;
-  rating: number;
-  profilePicture: string;
-  bio: string;
-  availability: string[];
-  location: string;
-  linkedin: string;
-  github: string;
-  twitter: string;
-}
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { User } from '../../types/user.types';
+import { useAuth } from '../../context/AuthContext';
 
 interface UserProfileCardProps {
-  user: UserProfile;
+  user: User;
 }
 
 const UserProfileCard: React.FC<UserProfileCardProps> = ({ user }) => {
+  const { user: currentUser } = useAuth();
+
   return (
-    <div className="bg-white shadow rounded-lg p-6 max-w-2xl">
+    <div className="bg-primary/10 rounded-lg border border-primary-light/20 p-6 h-full flex flex-col">
       <div className="flex items-center space-x-4">
-        <img 
-          src={user.profilePicture || '/default-avatar.png'} 
-          alt={`${user.username}'s profile`}
-          className="w-20 h-20 rounded-full object-cover"
+        <img
+          src={user.profilePicture || 'https://via.placeholder.com/100'}
+          alt={user.username}
+          className="w-20 h-20 rounded-full"
         />
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">{user.username}</h2>
-          <p className="text-gray-500">{user.role}</p>
-          <div className="flex items-center mt-1">
-            <span className="text-yellow-400">★</span>
-            <span className="ml-1 text-gray-600">{user.rating}</span>
+          <h2 className="text-xl font-semibold">{user.username}</h2>
+          <p className="text-gray-600">{user.email}</p>
+        </div>
+      </div>
+      {user.bio && (
+        <div className="mt-4">
+          <h3 className="text-lg font-medium">About</h3>
+          <p className="text-gray-600">{user.bio}</p>
+        </div>
+      )}
+      {user.skills && user.skills.length > 0 && (
+        <div className="mt-4">
+          <h3 className="text-lg font-medium">Skills</h3>
+          <div className="flex flex-wrap gap-2 mt-2">
+            {user.skills.map((skill, index) => (
+              <span
+                key={index}
+                className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+              >
+                {skill}
+              </span>
+            ))}
           </div>
         </div>
-      </div>
-
-      <div className="mt-6">
-        <h3 className="text-lg font-semibold text-gray-900">Bio</h3>
-        <p className="mt-2 text-gray-600">{user.bio}</p>
-      </div>
-
-      <div className="mt-6">
-        <h3 className="text-lg font-semibold text-gray-900">Skills</h3>
-        <div className="mt-2 flex flex-wrap gap-2">
-          {user.skills.map((skill, index) => (
-            <span 
-              key={index}
-              className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
-            >
-              {skill}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      <div className="mt-6">
-        <h3 className="text-lg font-semibold text-gray-900">Availability</h3>
-        <div className="mt-2 flex flex-wrap gap-2">
-          {user.availability.map((day, index) => (
-            <span 
-              key={index}
-              className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm"
-            >
-              {day}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      <div className="mt-6">
-        <h3 className="text-lg font-semibold text-gray-900">Location</h3>
-        <p className="mt-2 text-gray-600">{user.location}</p>
-      </div>
-
-      <div className="mt-6 flex space-x-4">
-        {user.linkedin && (
-          <a 
-            href={user.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:text-blue-800"
-          >
-            LinkedIn
-          </a>
-        )}
-        {user.github && (
-          <a 
-            href={user.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-800 hover:text-gray-600"
-          >
-            GitHub
-          </a>
-        )}
-        {user.twitter && (
-          <a 
-            href={user.twitter}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-400 hover:text-blue-600"
-          >
-            Twitter
-          </a>
+      )}
+      <div className="mt-auto pt-4">
+        {user.rating !== undefined && (
+          <div className="flex items-center justify-between">
+            <Link to={`/reviews?mentorId=${user.id}`} className="flex items-center hover:opacity-80 transition-opacity">
+              <span className="text-yellow-500 mr-1">★</span>
+              <span className="text-2xl font-bold text-yellow-500">{user.rating.toFixed(1)}</span>
+              <span className="text-gray-600 ml-2">/ 5.0</span>
+            </Link>
+            {currentUser && currentUser.role === 'mentee' && (
+              <Link
+                to={`/mentor/${user.id}`}
+                className="px-4 py-1 bg-gradient-primary text-white rounded-md hover:bg-gradient-light transition-all text-sm"
+              >
+                Book Session
+              </Link>
+            )}
+          </div>
         )}
       </div>
     </div>

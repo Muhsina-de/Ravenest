@@ -1,16 +1,17 @@
-import { User } from '../models/userprofile';
-import { Request, Response } from 'express';
+import { User } from '../models/user';
+import { Response } from 'express';
+import { AuthRequest } from '../types/express';
 
-const getUserProfile = async (req: Request, res: Response) => {
+export const getUserProfile = async (req: AuthRequest, res: Response) => {
     try {
         const profiles = await User.findAll();
         res.json(profiles);
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch profiles' });
     }
-    };
+};
 
-const getProfileById = async (req: Request, res: Response) => {
+export const getProfileById = async (req: AuthRequest, res: Response) => {
     try {
         const profile = await User.findByPk(req.params.id);
         if (!profile) {
@@ -21,4 +22,4 @@ const getProfileById = async (req: Request, res: Response) => {
     catch (error) {
         res.status(500).json({ error: 'Failed to fetch profile' });
     }
-    }
+};
